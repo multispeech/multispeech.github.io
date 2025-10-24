@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiSpeech </title>
+    <meta name="description" content="Your paper description for search engines and social media">
+    <meta property="og:title" content="Your Paper Title">
+    <meta property="og:description" content="Your paper description">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --light: #f8fafc;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--dark);
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover, nav a.active {
+            color: white;
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after, nav a.active::after {
+            width: 80%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .venue {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .authors {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .author {
+            text-align: center;
+        }
+
+        .author-name {
+            color: #e2e8f0;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-affiliation {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        section {
+            margin: 4rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: rgba(30, 41, 59, 0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .bibtex-container {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .bibtex-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+        }
+
+        .abstract-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+
+        /* Benchmark Table Styles */
+        .benchmark-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .refresh-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+        }
+
+        .last-updated {
+            color: var(--gray);
+            font-size: 0.9rem;
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #cbd5e1;
+            border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        th .sort-indicator {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        th.sorted .sort-indicator {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #e8a87c); color: #000; }
+        .rank-other { background: rgba(99, 102, 241, 0.2); color: #cbd5e1; }
+
+        .method-name {
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .method-link {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .method-link:hover {
+            color: var(--secondary);
+        }
+
+        .metric-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .best-value {
+            color: #34d399;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .authors {
+                gap: 1rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .benchmark-controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <header>
+        <nav>
+            <a href="#abstract">Abstract</a>
+            <!-- <a href="#video">Video</a> -->
+            <a href="#results">Results</a>
+            <a href="#benchmark">Benchmark</a>
+            <!-- <a href="#bibtex">BibTeX</a> -->
+        </nav>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Turning Speech Language Models into Multilingual Listeners</h1>
+            <div class="venue">Under Review</div>
+            
+            <div class="authors">
+                <div class="author">
+                    <div class="author-name">First Author</div>
+                    <div class="author-affiliation">University Name</div>
+                </div>
+                <div class="author">
+                    <div class="author-name">Second Author</div>
+                    <div class="author-affiliation">University Name</div>
+                </div>
+                <div class="author">
+                    <div class="author-name">Third Author</div>
+                    <div class="author-affiliation">Company Name</div>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i>
+                    Paper
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fab fa-github"></i>
+                    Code
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-database"></i>
+                    Datasets
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-robot"></i>
+                    Models
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <section id="abstract">
+            <h2 class="section-title">Abstract</h2>
+            <div class="card">
+                <p class="abstract-text">
+                    Speech Language Models (SLMs) that understand spoken language questions and commands support only a few high-resource languages, limiting access to modern technology for millions of speakers worldwide.
+This gap in language coverage stems from the scarcity of multilingual speech-language instruction-tuning datasets.
+To address this issue, we present MultiSpeechQA, a large-scale, synthetically generated and human-verified dataset comprising 9200 hours of more than 10.8 million spoken question-answer pairs in 23 typologically diverse languages, designed to improve the multilingual instruction-following capabilities of SLMs.
+Using MultiSpeechQA, we also introduce MultiSpeech-Bench, a multi-task benchmark to evaluate SLM performance across 23 languages.
+We compare the performance of a strong cascading system to three leading open-weight SLMs on MultiSpeech-Bench and find that the cascading system outperforms all existing open-weight SLMs.
+We then demonstrate the effectiveness of MultiSpeechQA by fine-tuning the best-performing open-weight SLM, Qwen 2.5-Omni, on our dataset, which substantially improves its performance and establishes new state-of-the-art results for open-weight models on our benchmark.
+Our findings show that high-quality synthetic datasets offer a scalable solution to improving the multilingual capabilities of SLMs, extending the benefits of natural spoken interactions to a wider range of languages.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        // ==========================================
+        // CONFIGURATION - Update these values
+        // ==========================================
+        const BENCHMARK_CONFIG = {
+            repo: 'multispeech/multispeech-bench',  // Replace with your GitHub username/repo
+            filePath: 'results/benchmark.csv',     // Path to your CSV file
+            branch: 'main'                          // Branch name (main or master)
+        };
+
+        // ==========================================
+        // Benchmark Data Management
+        // ==========================================
+        let benchmarkData = [];
+        let filteredData = [];
+        let sortConfig = { column: null, ascending: true };
+
+        // Load benchmark data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBenchmarkData();
+            setupSearchListener();
+        });
+
+        async function loadBenchmarkData() {
+            const contentDiv = document.getElementById('benchmarkContent');
+            contentDiv.innerHTML = '<div class="card"><div class="loading"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i><p style="margin-top: 1rem;">Loading benchmark data...</p></div></div>';
+            
+            try {
+                const url = `https://raw.githubusercontent.com/${BENCHMARK_CONFIG.repo}/${BENCHMARK_CONFIG.branch}/${BENCHMARK_CONFIG.filePath}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        benchmarkData = results.data;
+                        filteredData = [...benchmarkData];
+                        renderBenchmarkTable();
+                        updateLastUpdated();
+                    },
+                    error: function(error) {
+                        showError('Error parsing CSV: ' + error.message);
+                    }
+                });
+            } catch (error) {
+                showError('Error loading benchmark data: ' + error.message + '<br><br>Please check:<br>• Repository URL is correct<br>• File path exists<br>• Repository is public');
+            }
+        }
+
+        function renderBenchmarkTable() {
+            const contentDiv = document.getElementById('benchmarkContent');
+            
+            if (filteredData.length === 0) {
+                contentDiv.innerHTML = '<div class="card"><p class="abstract-text">No results found.</p></div>';
+                return;
+            }
+
+            const headers = Object.keys(filteredData[0]);
+            
+            let tableHTML = '<div class="table-container"><table><thead><tr>';
+            
+            headers.forEach(header => {
+                const isSorted = sortConfig.column === header;
+                const indicator = isSorted ? (sortConfig.ascending ? '↑' : '↓') : '↕';
+                tableHTML += `<th onclick="sortTable('${header}')" class="${isSorted ? 'sorted' : ''}">
+                    ${header}
+                    <span class="sort-indicator">${indicator}</span>
+                </th>`;
+            });
+            
+            tableHTML += '</tr></thead><tbody>';
+            
+            filteredData.forEach((row, index) => {
+                tableHTML += '<tr>';
+                headers.forEach((header, colIndex) => {
+                    let value = row[header];
+                    let cellClass = '';
+                    let cellContent = value;
+                    
+                    // Handle rank column
+                    if (colIndex === 0 && typeof value === 'number') {
+                        const rankClass = value === 1 ? 'rank-1' : value === 2 ? 'rank-2' : value === 3 ? 'rank-3' : 'rank-other';
+                        cellContent = `<span class="rank-badge ${rankClass}">#${value}</span>`;
+                    }
+                    // Handle method name (usually second column)
+                    else if (colIndex === 1) {
+                        cellClass = 'method-name';
+                    }
+                    // Handle numeric values
+                    else if (typeof value === 'number') {
+                        cellClass = 'metric-value';
+                        cellContent = value.toFixed(3);
+                    }
+                    // Handle links
+                    else if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                        cellContent = `<a href="${value}" class="method-link" target="_blank">Link <i class="fas fa-external-link-alt" style="font-size: 0.8rem;"></i></a>`;
+                    }
+                    
+                    tableHTML += `<td class="${cellClass}">${cellContent !== null && cellContent !== undefined ? cellContent : ''}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            
+            tableHTML += '</tbody></table></div>';
+            contentDiv.innerHTML = tableHTML;
+        }
+
+        function sortTable(column) {
+            if (sortConfig.column === column) {
+                sortConfig.ascending = !sortConfig.ascending;
+            } else {
+                sortConfig.column = column;
+                sortConfig.ascending = true;
+            }
+            
+            filteredData.sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+                
+                if (aVal === null || aVal === undefined) return 1;
+                if (bVal === null || bVal === undefined) return -1;
+                
+                if (typeof aVal === 'number' && typeof bVal === 'number') {
+                    return sortConfig.ascending ? aVal - bVal : bVal - aVal;
+                }
+                
+                const aStr = String(aVal).toLowerCase();
+                const bStr = String(bVal).toLowerCase();
+                
+                if (sortConfig.ascending) {
+                    return aStr.localeCompare(bStr);
+                } else {
+                    return bStr.localeCompare(aStr);
+                }
+            });
+            
+            renderBenchmarkTable();
+        }
+
+        function setupSearchListener() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterTable);
+            }
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredData = [...benchmarkData];
+            } else {
+                filteredData = benchmarkData.filter(row => {
+                    return Object.values(row).some(value => {
+                        return String(value).toLowerCase().includes(searchTerm);
+                    });
+                });
+            }
+            
+            renderBenchmarkTable();
+        }
+
+        function updateLastUpdated() {
+            const lastUpdatedDiv = document.getElementById('lastUpdated');
+            const now = new Date();
+            lastUpdatedDiv.textContent = `Last updated: ${now.toLocaleString()}`;
+        }
+
+        function showError(message) {
+            const contentDiv = document.getElementById('benchmarkContent');
+            contentDiv.innerHTML = `<div class="card"><div class="error-message"><i class="fas fa-exclamation-triangle"></i> ${message}</div></div>`;
+        }
+
+        // ==========================================
+        // General Page Functionality
+        // ==========================================
+        
+        // Scroll indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.width = scrolled + '%';
+        });
+
+        // Copy BibTeX function
+        function copyBibtex() {
+            const bibtexText = document.querySelector('.bibtex-code').textContent;
+            navigator.clipboard.writeText(bibtexText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer for section highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a');
+
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '-100px 0px -66%'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>
+            </div>
+        </section>
+
+        <!-- <section id="video">
+            <h2 class="section-title">Video Presentation</h2>
+            <div class="video-container"> -->
+                <!-- Replace VIDEO_ID with your YouTube video ID -->
+                <!-- <iframe src="https://www.youtube.com/embed/VIDEO_ID" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </section> -->
+
+        <!-- <section id="method">
+            <h2 class="section-title">Method Overview</h2>
+            <div class="card">
+                <p class="abstract-text">
+                    Our approach introduces a novel framework that combines multiple techniques to achieve state-of-the-art 
+                    performance. The key innovation lies in the integration of advanced algorithms with efficient processing 
+                    pipelines, enabling real-time applications while maintaining high accuracy.
+                </p>
+            </div>
+        </section> -->
+
+        <section id="results">
+            <h2 class="section-title">Results</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <!-- Replace with your actual images: images/result1.jpg -->
+                    <img src="images/results_baseline.png" alt="Baseline Results">
+                    <div class="image-caption">We find that a cascaded system is still a strong baseline.</div>
+                </div>
+                <div class="image-card">
+                    <img src="images/results_qwen.png" alt="Qwen Results">
+                    <div class="image-caption">We find that finetuning Qwen2.5-Omni with MultiSPeechQA improves performance.</div>
+                </div>
+                <!-- <div class="image-card">
+                    <img src="https://via.placeholder.com/800x450/f093fb/ffffff?text=Result+3" alt="Result 3">
+                    <div class="image-caption">Qualitative results on benchmark</div>
+                </div> -->
+            </div>
+        </section>
+
+        <section id="benchmark">
+            <h2 class="section-title">Benchmark Results</h2>
+            
+            <div class="card">
+                <div class="benchmark-controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Search methods...">
+                    </div>
+                    <button class="refresh-btn" onclick="loadBenchmarkData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Data
+                    </button>
+                </div>
+                <div class="last-updated" id="lastUpdated"></div>
+            </div>
+
+            <div id="benchmarkContent">
+                <div class="card">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p style="margin-top: 1rem;">Loading benchmark data...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- <section id="bibtex">
+            <h2 class="section-title">Citation</h2>
+            <div class="bibtex-container">
+                <button class="copy-btn" onclick="copyBibtex()">Copy</button>
+                <pre class="bibtex-code">@article{YourName2024,
+                      title={Your Amazing Paper Title Here},
+                      author={First Author and Second Author and Third Author},
+                      journal={Conference/Journal Name},
+                      year={2024},
+                      url={https://your-domain.com/your-project-page}
+                }</pre>
+            </div>
+        </section> -->
+
+        <!-- <section id="acknowledgments">
+            <h2 class="section-title">Acknowledgments</h2>
+            <div class="card">
+                <p class="abstract-text"> -->
+
+
+    <!-- <footer>
+        <p>© 2025 Your Name. Licensed under <a href="http://creativecommons.org/licenses/by-sa/4.0/" style="color: var(--primary);">CC BY-SA 4.0</a></p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Template inspired by academic research pages</p>
+    </footer> -->
